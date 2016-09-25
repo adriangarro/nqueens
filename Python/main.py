@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-main.py: N Queens Problem.
+main.py: User interaction with N Queens Problem.
 '''
 
 from nqueens import N_Queens
@@ -25,34 +25,42 @@ def main():
         choice = input('Select an option to continue: ')
         if choice in ['1', '2']:
             if choice == '1':
-                queens_quant = int_input(
-                    '\nWelcome, please write the number of queens: '
-                )
                 try:
-                    problem.set_queens_quant(queens_quant)
-                    problem.solve()
-                    print('Problem solve! Please see the solutions :)\n')
-                    # show option: see solutions
-                    if '2' not in options: options.append('2')
+                    queens_quant = int_input(
+                        '\nWelcome, please write the number of queens: '
+                    )
+                    try:
+                        problem.set_queens_quant(queens_quant)
+                        problem.solve()
+                        print('Problem solve! Please see the solutions :)\n')
+                        # show option: see solutions
+                        if '2' not in options: options.append('2')
+                    except ValueError:
+                        print('The number of queens can not be lower than 4.')
+                        print('Try it again please.\n')
                 except ValueError:
-                    print('The number of queens can not be lower than 4.')
+                    print('You do not enter a number.')
                     print('Try it again please.\n')
             if choice == '2':
                 solutions_num = problem.solutions_num
                 print('\nThe number of solutions for this problem are:', solutions_num)
-                solution_num = int_input(
-                    'Please write the number of the solution that you want see: '
-                )
                 try:
-                    problem.print_solution(solution_num)
-                    print('\n')
-                except IndexError:
-                    print('Sorry, this solution does not exist.\n')
+                    solution_num = int_input(
+                        'Please write the number of the solution you want to see: '
+                    )
+                    try:
+                        problem.print_solution(solution_num)
+                        print('\n')
+                    except IndexError:
+                        print('Sorry, this solution does not exist.\n')
+                except ValueError:
+                    print('You do not enter a number.')
+                    print('Try it again please.\n')
         elif choice == '0':
             print('Thank you for your time. ;)')
             return
         else:
-            print('Pick a valid option from menu.')
+            print('Pick a valid option from menu!')
 
 if __name__ == '__main__':
     main()

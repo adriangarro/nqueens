@@ -5,7 +5,7 @@
 nqp.py: N Queens Problem.
 '''
 
-# to do: improve attack and permuts.
+from combinatorial import permutations, combinations_of_2
 
 __copyright__ = '(c) 2016 E. Adrian Garro S. Costa Rica Institute of Technology.'
 
@@ -44,18 +44,11 @@ class N_Queens:
         )
         result_diag = result_diag45 or result_diag135
         return result_diag
-    
-    def combinations_of_2(self, elements):
-        '''
-        Can not be repeated elements.
-        '''
-        combs = [(x, y) for x in elements for y in elements if y > x]
-        return combs
                 
     def attack(self, queens_cols):
         queens_pos = dict(enumerate(queens_cols))
         inv_queens_pos = {col : row for row, col in queens_pos.items()}
-        pairs_queen_cols = self.combinations_of_2(queens_cols)
+        pairs_queen_cols = combinations_of_2(queens_cols)
         there_attack = False
         for queen1_col, queen2_col in pairs_queen_cols:
             queen1_row = inv_queens_pos[queen1_col]
@@ -67,18 +60,10 @@ class N_Queens:
         
     def not_attack(self, queens_cols):
         return not self.attack(queens_cols)
-        
-    def permutations(self, elements):
-        if len(elements) <= 1:
-            yield elements
-        else:
-            for perm in self.permutations(elements[1:]):
-                for i in range(len(elements)):
-                    yield perm[:i] + elements[0:1] + perm[i:]
     
     def solve(self):
         if self.queens_quant:
-            all_possible_queens_cols = self.permutations(
+            all_possible_queens_cols = permutations(
                 list(range(self.queens_quant))
             )
             self.solutions = [
@@ -92,7 +77,7 @@ class N_Queens:
     def print_solution(self, solution_num):
         if solution_num in range(1, self.solutions_num+1):
             solution = self.solutions[solution_num-1]
-            def create_box(queen_pos) :
+            def create_box(queen_pos):
                 box = (
                     '\n|' 
                     + '   |' * queen_pos 
