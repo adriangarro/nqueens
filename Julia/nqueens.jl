@@ -1,61 +1,72 @@
-# N Queens. -#
+# N Queens Problem. -#
 
 # (c) E. Adrian Garro S. Costa Rica Institute of Technology. -#
 
-function are_in_diag45(queen1_row::Int, queen1_col::Int, queen2_row::Int, queen2_col::Int)
-    return queen1_row - queen1_col == queen2_row - queen2_col
+include("combinatorial.jl")
+
+function areInDiag45(queen1Row::Int, queen1Col::Int, queen2Row::Int, queen2Col::Int)
+    queen1Row - queen1Col == queen2Row - queen2Col
 end
 
-function are_in_diag135(queen1_row::Int, queen1_col::Int, queen2_row::Int, queen2_col::Int)
-    return queen1_row + queen1_col == queen2_row + queen2_col
+function areInDiag135(queen1Row::Int, queen1Col::Int, queen2Row::Int, queen2Col::Int)
+    queen1Row + queen1Col == queen2Row + queen2Col
 end
 
-function are_in_diag(queen1_row::Int, queen1_col::Int, queen2_row::Int, queen2_col::Int)
-    result_diag45 = are_in_diag45(
-        queen1_row, queen1_col, queen2_row, queen2_col
+function areInDiag(queen1Row::Int, queen1Col::Int, queen2Row::Int, queen2Col::Int)
+    resultDiag45 = areInDiag45(
+        queen1Row, queen1Col, queen2Row, queen2Col
     )
-    result_diag135 = are_in_diag135(
-        queen1_row, queen1_col, queen2_row, queen2_col
+    resultDiag135 = areInDiag135(
+        queen1Row, queen1Col, queen2Row, queen2Col
     )
-    result_diag = result_diag45 || result_diag135
-    return result_diag
+    resultDiag = resultDiag45 || resultDiag135
 end
 
-function combinations_of_2(elements)
-    elements_len = length(elements)
-    function _it()
-        for i = 1:elements_len
-            for j = i+1:elements_len
-                produce(
-                    (elements[i], elements[j])
-                )
-            end
-        end
-    end
-    Task(_it)
-end
-
-function attack(queens_cols)
-    queens_pos = Dict(enumerate(queens_cols))
-    inv_queens_pos = Dict((col, row) for (row, col) in queens_pos)
-    pairs_queen_cols = combinations_of_2(queens_cols)
-    there_attack = false
-    for (queen1_col, queen2_col) in pairs_queen_cols
-        queen1_row = inv_queens_pos[queen1_col]
-        queen2_row = inv_queens_pos[queen2_col]
-        if are_in_diag(queen1_row, queen1_col, queen2_row, queen2_col)
-            there_attack = true
+function attack(queensCols::Array{Int})
+    queensPos = Dict(enumerate(queensCols))
+    invQueenPos = Dict((col, row) for (row, col) in queensPos)
+    pairsQueenCols = combinationsOf2(queensCols)
+    thereAttack = false
+    for (queen1Col, queen2Col) in pairsQueenCols
+        queen1Row = invQueenPos[queen1Col]
+        queen2Row = invQueenPos[queen2Col]
+        if areInDiag(queen1Row, queen1Col, queen2Row, queen2Col)
+            thereAttack = true
             break
         end
     end
-    return there_attack
+    return thereAttack
 end
 
-function not_attack(queens_cols)
-    return !attack(queens_cols)
+function notAttack(queensCols)
+    !attack(queensCols)
+end
+    
+function solve(queensQuant::Int)
+    solutions = @task permutations(
+        collect(1:queensQuant)
+    )
+    solutions = collect(solutions)
+    filter!(notAttack, solutions)
 end
 
-function permutations(elements)
-    return elements
+function createBox(queensQuant, queenPos)
+    queenPos -= 1
+    string(
+        "\n|", 
+        "   |" ^ queenPos, 
+        " X |", 
+        "   |" ^ (queensQuant - (queenPos + 1))
+    )
 end
 
+function printSolution(queensQuant, solution)
+    boxes = [createBox(queensQuant, queens_cols) for queens_cols in solution]
+    chain = string("\n+", "---+"  ^ queensQuant)
+    chessboard = string(string(chain, join(boxes, chain)), chain)
+    # print('\nSolution #' + str(solution_num) + '\n')
+    print(chessboard)
+end
+
+solutions = solve(4)
+printSolution(4, solutions[2])

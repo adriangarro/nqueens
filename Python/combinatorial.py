@@ -15,7 +15,7 @@ def combinations_of_2(xs):
 
 def permutations(xs):
     '''
-    Permutations of 2 without repeated elements.
+    Permutations without repeated elements.
     '''
     if xs == []:
         yield []
