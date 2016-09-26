@@ -1,72 +1,92 @@
-# N Queens Problem. -#
+# N Queens Problem.
 
-# (c) E. Adrian Garro S. Costa Rica Institute of Technology. -#
+# (c) E. Adrian Garro S. Costa Rica Institute of Technology.
 
 include("combinatorial.jl")
 
-function areInDiag45(queen1Row::Int, queen1Col::Int, queen2Row::Int, queen2Col::Int)
-    queen1Row - queen1Col == queen2Row - queen2Col
+type NQueens
+    queens_quant::Int
+    solutions::Array{Array{Int}}
+    solutions_num::Int
 end
 
-function areInDiag135(queen1Row::Int, queen1Col::Int, queen2Row::Int, queen2Col::Int)
-    queen1Row + queen1Col == queen2Row + queen2Col
+function set_queens_quant!(problem::NQueens, queens_quant::Int)
+    if queens_quant > 3
+        problem.queens_quant = queens_quant
+    else
+        error("Invalid number for this problem.")
+    end
 end
 
-function areInDiag(queen1Row::Int, queen1Col::Int, queen2Row::Int, queen2Col::Int)
-    resultDiag45 = areInDiag45(
-        queen1Row, queen1Col, queen2Row, queen2Col
+function are_in_diag45(queen1_row::Int, queen1_col::Int, queen2_row::Int, queen2_col::Int)
+    queen1_row - queen1_col == queen2_row - queen2_col
+end
+
+function are_in_diag135(queen1_row::Int, queen1_col::Int, queen2_row::Int, queen2_col::Int)
+    queen1_row + queen1_col == queen2_row + queen2_col
+end
+
+function are_in_diag(queen1_row::Int, queen1_col::Int, queen2_row::Int, queen2_col::Int)
+    result_diag45 = are_in_diag45(
+        queen1_row, queen1_col, queen2_row, queen2_col
     )
-    resultDiag135 = areInDiag135(
-        queen1Row, queen1Col, queen2Row, queen2Col
+    result_diag135 = are_in_diag135(
+        queen1_row, queen1_col, queen2_row, queen2_col
     )
-    resultDiag = resultDiag45 || resultDiag135
+    result_diag = result_diag45 || result_diag135
 end
 
-function attack(queensCols::Array{Int})
-    queensPos = Dict(enumerate(queensCols))
-    invQueenPos = Dict((col, row) for (row, col) in queensPos)
-    pairsQueenCols = combinationsOf2(queensCols)
-    thereAttack = false
-    for (queen1Col, queen2Col) in pairsQueenCols
-        queen1Row = invQueenPos[queen1Col]
-        queen2Row = invQueenPos[queen2Col]
-        if areInDiag(queen1Row, queen1Col, queen2Row, queen2Col)
-            thereAttack = true
+function attack(queens_cols::Array{Int})
+    queens_pos = Dict(enumerate(queens_cols))
+    inv_queen_pos = Dict((col, row) for (row, col) in queens_pos)
+    pairs_queen_cols = combinations_of_2(queens_cols)
+    there_attack = false
+    for (queen1_col, queen2_col) in pairs_queen_cols
+        queen1_row = inv_queen_pos[queen1_col]
+        queen2_row = inv_queen_pos[queen2_col]
+        if are_in_diag(queen1_row, queen1_col, queen2_row, queen2_col)
+            there_attack = true
             break
         end
     end
-    return thereAttack
+    return there_attack
 end
 
-function notAttack(queensCols)
-    !attack(queensCols)
+function not_attack(queens_cols)
+    !attack(queens_cols)
 end
     
-function solve(queensQuant::Int)
-    solutions = @task permutations(
-        collect(1:queensQuant)
-    )
-    solutions = collect(solutions)
-    filter!(notAttack, solutions)
+function solve!(problem::NQueens)
+    if problem.queens_quant != 0
+        all_possible_queens_cols = @task permutations(
+            collect(1:problem.queens_quant)
+        )
+        problem.solutions = collect(all_possible_queens_cols)
+        filter!(not_attack, problem.solutions)
+        problem.solutions_num = length(problem.solutions)
+    else
+       error("Number of queens not avaible.") 
+    end
 end
 
-function createBox(queensQuant, queenPos)
-    queenPos -= 1
-    string(
-        "\n|", 
-        "   |" ^ queenPos, 
-        " X |", 
-        "   |" ^ (queensQuant - (queenPos + 1))
-    )
+function print_solution(problem::NQueens, solution_num::Int)
+    if solution_num in collect(1:problem.solutions_num)
+        solution = problem.solutions[solution_num]
+        function create_box(queen_pos::Int)
+            queen_pos -= 1
+            string(
+                "\n|", 
+                "   |" ^ queen_pos, 
+                " X |", 
+                "   |" ^ (problem.queens_quant - (queen_pos + 1))
+            )
+        end
+        boxes = [create_box(queens_cols) for queens_cols in solution]
+        chain = string("\n+", "---+"  ^ problem.queens_quant)
+        chessboard = string(string(chain, join(boxes, chain)), chain)
+        print(string("\nSolution #", solution_num, "\n"))
+        print(chessboard)
+    else
+        error("Solution not exist.")
+    end
 end
-
-function printSolution(queensQuant, solution)
-    boxes = [createBox(queensQuant, queens_cols) for queens_cols in solution]
-    chain = string("\n+", "---+"  ^ queensQuant)
-    chessboard = string(string(chain, join(boxes, chain)), chain)
-    # print('\nSolution #' + str(solution_num) + '\n')
-    print(chessboard)
-end
-
-solutions = solve(4)
-printSolution(4, solutions[2])

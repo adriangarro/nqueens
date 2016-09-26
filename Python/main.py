@@ -23,11 +23,11 @@ def main():
         print('    	0) End.')
         print('----------------------------------')
         choice = input('Select an option to continue: ')
-        if choice in ['1', '2']:
+        if choice in options:
             if choice == '1':
                 try:
                     queens_quant = int_input(
-                        '\nWelcome, please write the number of queens: '
+                        '\nPlease write the number of queens: '
                     )
                     try:
                         problem.set_queens_quant(queens_quant)
