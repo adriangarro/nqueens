@@ -34,7 +34,6 @@ function main()
 	while true
 		println("\n")
 		println("--------(N Queens Problem)---------")
-		println("---------------Menu----------------")
 		println("    	1) Input problem.")
 	    println("    	2) See solutions.")
 		println("    	0) End.")
@@ -73,7 +72,7 @@ function main()
 						println(e)
 					end
 				else
-					print("See solutions is not avaible.")
+					print("See solutions is not available.")
 				end
 			end
 		elseif choice == "0"

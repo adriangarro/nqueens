@@ -12,29 +12,51 @@ object UI extends App {
 	def readOption: Int = {
 		println("""|
 		           |--------(N Queens Problem)---------
-		           |---------------Menu----------------
 		           |         1) Input problem.
 		           |         2) See solutions.
 		           |         0) End.
 			       |""".stripMargin
 		)
 		print("Select an option to continue: ")
-		StdIn.readInt()
+		try {
+			StdIn.readInt()
+		} catch {
+			case e: Exception => -1
+		}
 	}
 
 	def menu(option: Int): Boolean = option match {
 		case 1 =>
 			print("Please write the number of queens: ")
-			val queensQuant: Int = StdIn.readInt()
-			problem.setQueensQuant(queensQuant)
-			problem.solve()
+			try {
+				val queensQuant: Int = StdIn.readInt()
+				try {
+					problem.setQueensQuant(queensQuant)
+					problem.solve()
+				} catch {
+					case e: Exception => println(e)
+				}
+
+			} catch {
+				case e: Exception => println(e)
+			}
 			true
 		case 2 =>
 			val solutionsNum = problem.solutionsNum
-			println("The number of solutions for this problem are: " + solutionsNum)
-			print("Please write the number of the solution you want to see: ")
-			val solutionNum: Int = StdIn.readInt()
-			problem.printSolution(solutionNum)
+			if (solutionsNum != 0) {
+				println("The number of solutions for this problem are: " + solutionsNum)
+				print("Please write the number of the solution you want to see: ")
+				try {
+					val solutionNum: Int = StdIn.readInt()
+					try {
+						problem.printSolution(solutionNum)
+					} catch {
+						case e: Exception => println(e)
+					}
+				} catch {
+					case e: Exception => println(e)
+				}
+			} else println("See solutions is not available.")
 			true
 		case 0 =>
 			println("Thank you for your time. ;)")

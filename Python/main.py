@@ -17,7 +17,6 @@ def main():
     problem =  N_Queens()
     while True:
         print('--------(N Queens Problem)---------')
-        print('---------------Menu----------------')
         print('    	1) Input problem.')
         if '2' in options: print(' 	2) See solutions.')
         print('    	0) End.')
