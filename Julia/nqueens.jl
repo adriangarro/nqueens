@@ -18,26 +18,14 @@ function set_queens_quant!(problem::NQueens, queens_quant::Int)
     end
 end
 
-function are_in_diag45(queen1_row::Int, queen1_col::Int, queen2_row::Int, queen2_col::Int)
-    queen1_row - queen1_col == queen2_row - queen2_col
-end
-
-function are_in_diag135(queen1_row::Int, queen1_col::Int, queen2_row::Int, queen2_col::Int)
-    queen1_row + queen1_col == queen2_row + queen2_col
-end
-
 function are_in_diag(queen1_row::Int, queen1_col::Int, queen2_row::Int, queen2_col::Int)
-    result_diag45 = are_in_diag45(
-        queen1_row, queen1_col, queen2_row, queen2_col
-    )
-    result_diag135 = are_in_diag135(
-        queen1_row, queen1_col, queen2_row, queen2_col
-    )
+    result_diag45 = queen1_row - queen1_col == queen2_row - queen2_col
+    result_diag135 = queen1_row + queen1_col == queen2_row + queen2_col
     result_diag = result_diag45 || result_diag135
 end
 
 function attack(queens_cols::Array{Int})
-    queens_pos = Dict(enumerate(queens_cols))
+    queens_pos = enumerate(queens_cols)
     inv_queen_pos = Dict((col, row) for (row, col) in queens_pos)
     pairs_queen_cols = combinations_of_2(queens_cols)
     there_attack = false
@@ -65,7 +53,7 @@ function solve!(problem::NQueens)
         filter!(not_attack, problem.solutions)
         problem.solutions_num = length(problem.solutions)
     else
-       error("Number of queens not avaible.") 
+       error("Number of queens not available.") 
     end
 end
 

@@ -20,30 +20,16 @@ class N_Queens:
             self.queens_quant = queens_quant
         else:
             raise ValueError('Invalid number for this problem.')
-        
-    def are_in_diag45(self, queen1_row, queen1_col, queen2_row, queen2_col):
-        values = [queen1_row, queen1_col, queen2_row, queen2_col]
-        if False not in [isinstance(value, int) for value in values]:
-            return queen1_row - queen1_col == queen2_row - queen2_col
-        else:
-            raise TypeError('The parameters must be integers.')
-    
-    def are_in_diag135(self, queen1_row, queen1_col, queen2_row, queen2_col):
-        values = [queen1_row, queen1_col, queen2_row, queen2_col]
-        if False not in [isinstance(value, int) for value in values]:
-            return queen1_row + queen1_col == queen2_row + queen2_col
-        else:
-            raise TypeError('The parameters must be integers.')
     
     def are_in_diag(self, queen1_row, queen1_col, queen2_row, queen2_col):
-        result_diag45 = self.are_in_diag45(
-            queen1_row, queen1_col, queen2_row, queen2_col
-        )
-        result_diag135 = self.are_in_diag135(
-            queen1_row, queen1_col, queen2_row, queen2_col
-        )
-        result_diag = result_diag45 or result_diag135
-        return result_diag
+        values = [queen1_row, queen1_col, queen2_row, queen2_col]
+        if False not in [isinstance(value, int) for value in values]:
+            in_diag45 = queen1_row - queen1_col == queen2_row - queen2_col
+            in_diag135 = queen1_row + queen1_col == queen2_row + queen2_col
+            in_diag = in_diag45 or in_diag135
+            return in_diag
+        else:
+            raise TypeError('The parameters must be integers.')
                 
     def attack(self, queens_cols):
         queens_pos = dict(enumerate(queens_cols))
@@ -72,7 +58,7 @@ class N_Queens:
             ]
             self.solutions_num = len(self.solutions)
         else:
-            raise AttributeError('Number of queens not avaible.')
+            raise AttributeError('Number of queens not available.')
     
     def print_solution(self, solution_num):
         if solution_num in range(1, self.solutions_num+1):

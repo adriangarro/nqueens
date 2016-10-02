@@ -11,7 +11,7 @@ def combinations_of_2(xs):
     '''
     Combinations of 2 without repeated elements.
     '''
-    return [(x, y) for x in xs for y in xs if y > x]
+    return ((x, y) for x in xs for y in xs if y > x)
 
 def permutations(xs):
     '''
