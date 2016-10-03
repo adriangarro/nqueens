@@ -1,4 +1,4 @@
-# combinatorial.jl: Combinatorial functions.
+# combinatorics.jl: Combinatorial functions.
 
 # (c) E. Adrian Garro S. Costa Rica Institute of Technology.
 
@@ -7,7 +7,14 @@
 Combinations of 2 without repeated elements.
 """
 function combinations_of_2(xs)
-	return [(x, y) for x in xs for y in xs if y > x]
+	xs_len = length(xs)
+	for i = 1:xs_len
+		for j = i+1:xs_len
+			produce(
+				(xs[i], xs[j])
+			)
+		end
+	end
 end
 	
 """

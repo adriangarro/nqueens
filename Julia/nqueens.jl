@@ -2,7 +2,7 @@
 
 # (c) E. Adrian Garro S. Costa Rica Institute of Technology.
 
-include("combinatorial.jl")
+include("combinatorics.jl")
 
 type NQueens
     queens_quant::Int
@@ -27,7 +27,7 @@ end
 function attack(queens_cols::Array{Int})
     queens_pos = enumerate(queens_cols)
     inv_queen_pos = Dict((col, row) for (row, col) in queens_pos)
-    pairs_queen_cols = combinations_of_2(queens_cols)
+    pairs_queen_cols = @task combinations_of_2(queens_cols)
     there_attack = false
     for (queen1_col, queen2_col) in pairs_queen_cols
         queen1_row = inv_queen_pos[queen1_col]
