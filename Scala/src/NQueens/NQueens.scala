@@ -93,6 +93,5 @@ object NQueens {
 		}
 		else
 			throw new Exception("Solution not exist.")
-
 	}
 }

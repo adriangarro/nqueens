@@ -5,7 +5,7 @@
 nqp.py: N Queens Problem.
 '''
 
-from combinatorial import permutations, combinations_of_2
+from combinatorics import permutations, combinations_of_2
 
 __copyright__ = '(c) 2016 E. Adrian Garro S. Costa Rica Institute of Technology.'
 

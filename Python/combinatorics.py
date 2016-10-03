@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-combinatorial.py: Combinatorial functions.
+combinatorics.py: Combinatorial functions.
 '''
 
 __copyright__ = '(c) 2016 E. Adrian Garro S. Costa Rica Institute of Technology.'

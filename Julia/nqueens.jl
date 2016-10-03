@@ -72,8 +72,8 @@ function print_solution(problem::NQueens, solution_num::Int)
         boxes = [create_box(queens_cols) for queens_cols in solution]
         chain = string("\n+", "---+"  ^ problem.queens_quant)
         chessboard = string(string(chain, join(boxes, chain)), chain)
-        print(string("\nSolution #", solution_num, "\n"))
-        print(chessboard)
+        println(string("\nSolution #", solution_num, "\n"))
+        println(chessboard)
     else
         error("Solution not exist.")
     end
