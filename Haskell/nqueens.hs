@@ -2,9 +2,9 @@
  
 (c) E. Adrian Garro S. Costa Rica Institute of Technology. -}
 
-import Data.List (delete)
 import Data.Maybe (fromJust)
-import qualified Data.Map as M (fromList, lookup) -- lines, unlines
+import Data.List (delete, intercalate)
+import qualified Data.Map as Map (fromList, lookup)
 
 duplicate :: String -> Int -> String
 duplicate string n = concat $ replicate n string
@@ -21,7 +21,7 @@ permutations [] = [[]]
 permutations xs = [x : ys | x <- xs, ys <- permutations $ delete x xs]
 
 -- Checks if a pair of queens are in the same diagonal.
-inDiag :: (Integral i) => (i, i) -> (i, i) -> Bool
+inDiag :: (Int, Int) -> (Int, Int) -> Bool
 inDiag (queen1Row, queen2Row) (queen1Col, queen2Col) = inDiag45 || inDiag135
     where inDiag45 = queen1Row - queen1Col == queen2Row - queen2Col
           inDiag135 = queen1Row + queen1Col == queen2Row + queen2Col
@@ -36,8 +36,8 @@ attack queensCols = thereAttack
           pairsOfRows = map toRows pairsOfCols
           pairsOfCols = combsOfTwo queensCols 
           toRows (col1, col2) = (rowOf col1, rowOf col2)
-          rowOf col = fromJust $ M.lookup col queensPosMap
-          queensPosMap = M.fromList queensPos
+          rowOf col = fromJust $ Map.lookup col queensPosMap
+          queensPosMap = Map.fromList queensPos
           queensPos = zip queensCols queensRows
           queensRows = [0..length(queensCols)-1]
  
@@ -52,7 +52,39 @@ solve queensQuant
     | otherwise = solutions
         where solutions = filter notAttack allPossibleQueensCols
               allPossibleQueensCols = permutations [0..queensQuant-1]
-    
-main = do putStr("N Queens Problem.")
 
+createBox:: Int -> Int -> String
+createBox queensQuant queenPos = box
+    where box = "\n|" ++ startPipes ++ mark ++ endPipes
+          startPipes = duplicate "   |" queenPos
+          mark = " X |"
+          endPipes = duplicate "   |" endPipesNum
+          endPipesNum = queensQuant -  (queenPos + 1)
+        
+createChessboard:: [Int] -> String
+createChessboard solution = chessboard
+    where chessboard = chain ++ incompleteBoard ++ chain
+          incompleteBoard = intercalate chain boxes
+          chain = "\n+" ++ duplicate "---+" queensQuant
+          boxes = map createBox' solution
+          createBox' = createBox queensQuant
+          queensQuant = length solution
+    
+
+-- Gets user's input as integer.            
+getInt message = do
+    putStr message
+    number <- getLine
+    return (read number::Int)
+
+main = do
+    putStrLn "N Queens Problem"
+    queensQuant <- getInt "Enter the number of queens: "
+    let solutions = solve queensQuant
+    putStr "The number of solutions are: "
+    print (length solutions)
+    solutionNum <- getInt "Pick a solution: "
+    let solution = solutions !! pred solutionNum
+    putStrLn (createChessboard solution)
+    
 
