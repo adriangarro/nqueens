@@ -69,7 +69,6 @@ createChessboard solution = chessboard
           boxes = map createBox' solution
           createBox' = createBox queensQuant
           queensQuant = length solution
-    
 
 -- Gets user's input as integer.            
 getInt message = do
@@ -83,8 +82,7 @@ main = do
     let solutions = solve queensQuant
     putStr "The number of solutions are: "
     print (length solutions)
-    solutionNum <- getInt "Pick a solution: "
-    let solution = solutions !! pred solutionNum
-    putStrLn (createChessboard solution)
+    putStrLn "Solutions: "
+    let printableSolutions = map createChessboard solutions
+    putStr ( unlines printableSolutions )
     
-
