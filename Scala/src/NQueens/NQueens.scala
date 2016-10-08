@@ -8,22 +8,20 @@ object NQueens {
 	var solutions: List[List[Int]] = List(Nil)
 	var solutionsNum: Int = 0
 
+	/**
+	  * Finds all permutations on a given seq
+	  * without repeated elements.
+	  */
+	def permutations[T](xs: Seq[T]): Iterator[List[T]] = xs match {
+		case Nil => Iterator(Nil)
+		case _ => for (x <- xs.iterator; ys <- permutations(xs.filter(_ != x))) yield x :: ys
+	}
+
 	def setQueensQuant(quant: Int): Unit = {
 		if (quant > 3)
 			queensQuant = quant
 		else
 			throw new Exception("Invalid number for N Queens problem.")
-	}
-
-	/**
-      * Checks if a pair of queens are in the same diagonal.
-      */
-	def inDiag(queensRows: (Int, Int), queensCols: (Int, Int)) = {
-		val (queen1Row, queen2Row) = queensRows
-		val (queen1Col, queen2Col) = queensCols
-		val inDiag45: Boolean = queen1Row - queen1Col == queen2Row - queen2Col
-		val inDiag135: Boolean = queen1Row + queen1Col == queen2Row + queen2Col
-		inDiag45 || inDiag135
 	}
 
 	/**
@@ -36,17 +34,18 @@ object NQueens {
 		case queenCol::Nil => false
 		case _ =>
 			val queensPos = queensCols.zipWithIndex
-			val queensPosMap = queensPos.toMap
-			def rowOf(col: Int) = queensPosMap.getOrElse(col, -1)
-			def toRows(cols: (Int, Int)) = {
-				val (col1, col2) = cols
-				(rowOf(col1), rowOf(col2))
+			val sumOfPos = for (pos <- queensPos) yield {
+				// row + col
+				pos._2 + pos._1
 			}
-			val pairsOfCols = Combinatorics.combinationsOfTwo(queensCols)
-			val possibleAttacks = for (pairOfCols <- pairsOfCols) yield {
-				inDiag(pairOfCols, toRows(pairOfCols))
+			val diffOfPos = for (pos <- queensPos) yield {
+				// row - col
+				pos._2 - pos._1
 			}
-			possibleAttacks.contains(true)
+			// all results are different?
+			val inDiag45 = sumOfPos.size > sumOfPos.toSet.size
+			val inDiag135 = diffOfPos.size > diffOfPos.toSet.size
+			inDiag45 || inDiag135
     }
 
 	/**
@@ -62,10 +61,10 @@ object NQueens {
 	def solve(): Unit = {
 		if (queensQuant != 0) {
 			val initQueensCols = 0 until queensQuant
-			val allPossibleQueensCols = Combinatorics.permutations(initQueensCols)
+			val allPossibleQueensCols = permutations(initQueensCols)
 			val solutionsIterator = allPossibleQueensCols.filter(notAttack)
 			solutions = solutionsIterator.toList
-			solutionsNum = solutions.length
+			solutionsNum = solutions.size
 		}
 		else
 			throw new Exception("Number of queens not available.")
@@ -76,7 +75,7 @@ object NQueens {
 	  */
 	def printSolution(solutionNum: Int) = {
 		if ((1 to solutionsNum).contains(solutionNum)) {
-			val solution = solutions(solutionNum-1)
+			val solution = solutions(solutionNum - 1)
 			def createBox(queenPos: Int): String = (
 				"\n|"
 				+ "   |" * queenPos

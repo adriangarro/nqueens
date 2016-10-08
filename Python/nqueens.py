@@ -5,9 +5,20 @@
 nqp.py: N Queens Problem.
 '''
 
-from combinatorics import permutations, combinations_of_2
-
 __copyright__ = '(c) 2016 E. Adrian Garro S. Costa Rica Institute of Technology.'
+
+def permutations(xs):
+    '''
+    Permutations without repeated elements.
+    '''
+    if xs == []:
+        yield []
+    for x in xs:
+        temp = xs[:]
+        temp.remove(x)
+        for ys in permutations(temp):
+            yield [x] + ys
+
 
 class N_Queens:
     def __init__(self):
@@ -20,28 +31,19 @@ class N_Queens:
             self.queens_quant = queens_quant
         else:
             raise ValueError('Invalid number for this problem.')
-    
-    def are_in_diag(self, queen1_row, queen1_col, queen2_row, queen2_col):
-        values = [queen1_row, queen1_col, queen2_row, queen2_col]
-        if False not in [isinstance(value, int) for value in values]:
-            in_diag45 = queen1_row - queen1_col == queen2_row - queen2_col
-            in_diag135 = queen1_row + queen1_col == queen2_row + queen2_col
-            in_diag = in_diag45 or in_diag135
-            return in_diag
-        else:
-            raise TypeError('The parameters must be integers.')
-                
+            
     def attack(self, queens_cols):
-        queens_pos = dict(enumerate(queens_cols))
-        inv_queens_pos = {col : row for row, col in queens_pos.items()}
-        pairs_queen_cols = combinations_of_2(queens_cols)
-        there_attack = False
-        for queen1_col, queen2_col in pairs_queen_cols:
-            queen1_row = inv_queens_pos[queen1_col]
-            queen2_row = inv_queens_pos[queen2_col]
-            if self.are_in_diag(queen1_row, queen1_col, queen2_row, queen2_col):
-                there_attack = True
-                break
+        queens_quant = len(queens_cols)
+        queens_rows = range(queens_quant)
+        queens_pos = zip(queens_rows, queens_cols)
+        sum_of_pos = [sum(pos) for pos in queens_pos]
+        negative_queens_cols = (-1 * queen_col for queen_col in queens_cols)
+        queens_pos = zip(queens_rows, negative_queens_cols)
+        diff_of_pos = [sum(pos) for pos in queens_pos]
+        # all results are different?
+        in_diag45 = len(sum_of_pos) > len(set(sum_of_pos))
+        in_diag135 = len(diff_of_pos) > len(set(diff_of_pos))
+        there_attack = in_diag45 or in_diag135
         return there_attack
         
     def not_attack(self, queens_cols):

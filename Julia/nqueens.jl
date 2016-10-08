@@ -2,12 +2,28 @@
 
 # (c) E. Adrian Garro S. Costa Rica Institute of Technology.
 
-include("combinatorics.jl")
-
 type NQueens
     queens_quant::Int
     solutions::Array{Array{Int}}
     solutions_num::Int
+end
+
+"""
+`permutations(xs)`
+Permutations without repeated elements.
+"""
+function permutations(xs)
+    if xs == []
+        produce(Int[])
+    else
+        for x in xs
+            temp = copy(xs)
+            filter!(e -> e != x, temp)
+            for ys in @task permutations(temp)
+                produce(union(Int[x], ys))
+            end
+        end
+    end
 end
 
 function set_queens_quant!(problem::NQueens, queens_quant::Int)
@@ -18,32 +34,24 @@ function set_queens_quant!(problem::NQueens, queens_quant::Int)
     end
 end
 
-function are_in_diag(queen1_row::Int, queen1_col::Int, queen2_row::Int, queen2_col::Int)
-    result_diag45 = queen1_row - queen1_col == queen2_row - queen2_col
-    result_diag135 = queen1_row + queen1_col == queen2_row + queen2_col
-    result_diag = result_diag45 || result_diag135
-end
-
 function attack(queens_cols::Array{Int})
-    queens_pos = enumerate(queens_cols)
-    inv_queen_pos = Dict((col, row) for (row, col) in queens_pos)
-    pairs_queen_cols = @task combinations_of_2(queens_cols)
-    there_attack = false
-    for (queen1_col, queen2_col) in pairs_queen_cols
-        queen1_row = inv_queen_pos[queen1_col]
-        queen2_row = inv_queen_pos[queen2_col]
-        if are_in_diag(queen1_row, queen1_col, queen2_row, queen2_col)
-            there_attack = true
-            break
-        end
-    end
-    return there_attack
+    queens_quant = length(queens_cols)
+    queens_rows = 1:queens_quant
+    queens_pos = zip(queens_rows, queens_cols)
+    sum_of_pos = [sum(pos) for pos in queens_pos]
+    negative_queens_cols = [-1 * queen_col for queen_col in queens_cols]
+    queens_pos = zip(queens_rows, negative_queens_cols)
+    diff_of_pos = [sum(pos) for pos in queens_pos]
+    # all results are different?
+    in_diag45 = length(sum_of_pos) > length(Set(sum_of_pos))
+    in_diag135 = length(diff_of_pos) > length(Set(diff_of_pos))
+    there_attack = in_diag45 || in_diag135
 end
 
-function not_attack(queens_cols)
+function not_attack(queens_cols::Array{Int})
     !attack(queens_cols)
 end
-    
+
 function solve!(problem::NQueens)
     if problem.queens_quant != 0
         all_possible_queens_cols = @task permutations(

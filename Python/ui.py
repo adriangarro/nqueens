@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-main.py: User interaction with N Queens Problem.
+ui.py: User interaction with N Queens Problem.
 '''
 
 from nqueens import N_Queens
