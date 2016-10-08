@@ -26,13 +26,16 @@ comb([R|RT], [C|CT], [S|ST], [D|DT]):-
      S is R + C,
      D is R - C,
      comb(RT, CT, ST, DT).
-
-solve(N, C):-
-    range(N, R),
-    permut(R, C), 
+    
+not_attack(R, C):-
     comb(R, C, S, D),
     all_different(S),
     all_different(D).
+
+solve(N, C):-
+    range(N, R),
+    permut(R, C),
+    not_attack(R, C).
     
 get_all_solutions(N, S):-
     findall(C, solve(N, C), S).
